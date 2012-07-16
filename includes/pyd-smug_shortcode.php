@@ -1,6 +1,5 @@
 <?php
     /**
-     * Created by JetBrains PhpStorm.
      * User: mgyura
      * Date: 6/26/12
      */
