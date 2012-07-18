@@ -35,7 +35,8 @@
 
 
         try {
-            $f = new phpSmug( 'APIKey=' . $pydsmug_api, 'AppName=' . $pydsmug_appname . '/1 (' . $pydsmug_url . ')>' );
+            $f = new phpSmug("APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=SmugMug Slider/1.1 (http://pokayoke.co)>", "OAuthSecret=99460e933382584b6e6cebfb392f749d");
+            //$f = new phpSmug( 'APIKey=' . $pydsmug_api, 'AppName=' . $pydsmug_appname . '/1 (' . $pydsmug_url . ')>' );
             $f->login();
             $images = $f->images_get( 'AlbumID=' . $albumid, 'AlbumKey=' . $albumkey, "Heavy=1" );
             $images = ( $f->APIVer == "1.2.2" ) ? $images[ 'Images' ] : $images;

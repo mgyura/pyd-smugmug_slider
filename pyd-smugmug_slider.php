@@ -3,7 +3,7 @@
      Plugin Name: PYD SmugMug Slider
      Plugin URI: http://pokayoke.co
      Description: Using the amazing work of Woo Themes Flex Slider http://www.woothemes.com/flexslider/ and phpSmug http://phpsmug.com/ this plugin creates a shortcode generator that displays a responsive slider from a SmugMug album.
-     Version: 1.0
+     Version: 1.1
      Author: Michael Gyura
      Author URI: http://pokayoke.co
     */

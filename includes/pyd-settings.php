@@ -65,52 +65,52 @@
                     $pydsmug_cats     = get_option( 'pyd_smug_cats' );
 
 
-                    try {
-                        $f = new phpSmug( 'APIKey=' . $pydsmug_api, 'AppName=' . $pydsmug_appname . '/1 (' . $pydsmug_url . ')>' );
+                    $f = new phpSmug("APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=Poka Yoke Design", "OAuthSecret=99460e933382584b6e6cebfb392f749d");
 
-                        $f->login();
+                    	// Perform the 3 step OAuth Authorisation process.
+                    	// NOTE: This is a very simplified example that does NOT store the final token.
+                    	// You will need to ensure your application does.
 
-                        $categories = $f->categories_get( 'NickName=' . $pydsmug_nickname );
 
-                        echo '<p><b>Leave all unchecked to use every category OR select individual categories to use below</b></p>';
-                        echo '<hr><p><b>User Categories</b></p>';
 
-                        foreach ( $categories as $category => $categoryvalue ) {
-                            if ( $categoryvalue[ 'Type' ] == 'User' ) {
 
-                                ?>
+                    if ( ! isset($_SESSION ['SmugGalReqToken'] ) ) {
+                    		// Step 1: Get a Request Token
+                    		$d = $f->auth_getRequestToken();
+                    		$_SESSION['SmugGalReqToken'] = serialize( $d );
 
-                                <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php checked( $pydsmug_cats[ $categoryvalue[ 'id' ] ], $categoryvalue[ 'id' ] ); ?> />
-                                <label for="<?php echo $categoryvalue[ 'id' ] ?>">
-                                    <?php echo $categoryvalue[ 'Name' ] ?>
-                                </label>
-                                <br />
+                    		// Step 2: Get the User to login to SmugMug and Authorise this demo
+                    		echo "<p>Click <a href='".$f->authorize()."' target='_blank'><strong>HERE</strong></a> to Authorize This Demo.</p>";
+                            echo "<p>A new window/tab will open asking you to login to SmugMug (if not already logged in).  Once you've logged it, SmugMug will redirect you to a page asking you to approve the access (it's read only) to your public photos.  Approve the request and come back to this page and click REFRESH below.</p>";
+                            echo "<p><a href='".$_SERVER['PHP_SELF']."'><strong>REFRESH</strong></a></p>";
+                    	}
 
-                                <?php
 
-                            }
-                        }
 
-                        echo '<hr><p><b>SmugMug Categories</b></p>';
 
-                        foreach ( $categories as $category => $categoryvalue ) {
-                            if ( $categoryvalue[ 'Type' ] == 'SmugMug' ) {
 
-                                ?>
 
-                                <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php checked( $pydsmug_cats[ $categoryvalue[ 'id' ] ], $categoryvalue[ 'id' ] ); ?> />
-                                <label for="<?php echo $categoryvalue[ 'id' ] ?>">
-                                    <?php echo $categoryvalue[ 'Name' ] ?>
-                                </label>
 
-                                <?php
+                        else {
+                    		$reqToken = unserialize( $_SESSION['SmugGalReqToken'] );
+                    		unset( $_SESSION['SmugGalReqToken'] );
 
-                            }
-                        }
+                    		// Step 3: Use the Request token obtained in step 1 to get an access token
+                    		$f->setToken("id={$reqToken['Token']['id']}", "Secret={$reqToken['Token']['Secret']}");
+                    		$token = $f->auth_getAccessToken();	// The results of this call is what your application needs to store.
 
-                    } catch ( Exception $e ) {
-                        echo "{$e->getMessage()} (Error Code: {$e->getCode()})";
-                    }
+                    		// Set the Access token for use by phpSmug.
+                    		$f->setToken( "id={$token['Token']['id']}", "Secret={$token['Token']['Secret']}" );
+
+                    		// Get list of public albums
+                    		$albums = $f->albums_get( 'Heavy=True' );
+                    		// Get list of public images and other useful information
+                    		$images = $f->images_get( "AlbumID={$albums['0']['id']}", "AlbumKey={$albums['0']['Key']}", "Heavy=1" );
+                    		// Display the thumbnails and link to the Album page for each image
+                    		foreach ( $images['Images'] as $image ) {
+                    			echo '<a href="'.$image['URL'].'"><img src="'.$image['TinyURL'].'" title="'.$image['Caption'].'" alt="'.$image['id'].'" /></a>';
+                    		}
+                    	}
 
                     ?>
 
