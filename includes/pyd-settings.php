@@ -7,123 +7,211 @@
 
 
     /*-----------------------------------------------------------------------------------*/
-    /* Collect the default organizational settings */
+    /* Settings and oAuth approval for SmugMug Slider */
     /*-----------------------------------------------------------------------------------*/
 
     function pyd_smugslider_option_settings() {
+        global $add_my_script, $pydsmug_pydapi, $pydsmug_api, $pydsmug_progress, $pydsmug_cats;
+        $add_my_script = true;
+
         echo '<div class="wrap">';
         echo '<h2>SmugMug Slider Settings</h2>';
-        echo '<p>Settings for the SmugMug Slider Plugin</p>'
         ?>
-    <form method="post" action="options.php">
-        <?php settings_fields( 'pyd-smugslider-settings-group' ); ?>
-        <table class="form-table">
-            <tr valign="top">
-                <th scope="row">SmugMug API Key</th>
-                <td><input size="50" type="password" name="pyd_smug_api"
-                           value="<?php echo get_option( 'pyd_smug_api' ); ?>" />
-                </td>
-            </tr>
-        <tr valign="top">
-                <th scope="row">SmugMug API Secret</th>
-                <td><input size="50" type="password" name="pyd_smug_api_secret"
-                           value="<?php echo get_option( 'pyd_smug_api_secret' ); ?>" />
-                </td>
-            </tr>
-        <tr valign="top">
-                <th scope="row">SmugMug App Name</th>
-                <td><input size="50" type="text" name="pyd_smug_app_name"
-                           value="<?php echo get_option( 'pyd_smug_app_name' ); ?>" />
-                </td>
-            </tr>
-        <tr valign="top">
-                <th scope="row">SmugMug App URL</th>
-                <td><input size="50" type="text" name="pyd_smug_app_url"
-                           value="<?php echo get_option( 'pyd_smug_app_url' ); ?>" />
-                </td>
-            </tr>
-        <tr valign="top">
-                <th scope="row">SmugMug Nickname</th>
-                <td><input size="50" type="text" name="pyd_smug_nickname"
-                           value="<?php echo get_option( 'pyd_smug_nickname' ); ?>" />
-                </td>
-            </tr>
 
-            <tr valign="top">
-                <th scope="row">SmugMug Categories to Use</th>
-                <td>
-                    <?php
-                    global $add_my_script;
-
-                    $add_my_script = true;
-
-                    $pydsmug_api      = get_option( 'pyd_smug_api' );
-                    $pydsmug_secret   = get_option( 'pyd_smug_api_secret' );
-                    $pydsmug_appname  = get_option( 'pyd_smug_app_name' );
-                    $pydsmug_url      = get_option( 'pyd_smug_app_url' );
-                    $pydsmug_nickname = get_option( 'pyd_smug_nickname' );
-                    $pydsmug_cats     = get_option( 'pyd_smug_cats' );
-
-
-                    $f = new phpSmug("APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=Poka Yoke Design", "OAuthSecret=99460e933382584b6e6cebfb392f749d");
-
-                    	// Perform the 3 step OAuth Authorisation process.
-                    	// NOTE: This is a very simplified example that does NOT store the final token.
-                    	// You will need to ensure your application does.
-
-
-
-
-                    if ( ! isset($_SESSION ['SmugGalReqToken'] ) ) {
-                    		// Step 1: Get a Request Token
-                    		$d = $f->auth_getRequestToken();
-                    		$_SESSION['SmugGalReqToken'] = serialize( $d );
-
-                    		// Step 2: Get the User to login to SmugMug and Authorise this demo
-                    		echo "<p>Click <a href='".$f->authorize()."' target='_blank'><strong>HERE</strong></a> to Authorize This Demo.</p>";
-                            echo "<p>A new window/tab will open asking you to login to SmugMug (if not already logged in).  Once you've logged it, SmugMug will redirect you to a page asking you to approve the access (it's read only) to your public photos.  Approve the request and come back to this page and click REFRESH below.</p>";
-                            echo "<p><a href='".$_SERVER['PHP_SELF']."'><strong>REFRESH</strong></a></p>";
-                    	}
-
-
-
-
-
-
-
-                        else {
-                    		$reqToken = unserialize( $_SESSION['SmugGalReqToken'] );
-                    		unset( $_SESSION['SmugGalReqToken'] );
-
-                    		// Step 3: Use the Request token obtained in step 1 to get an access token
-                    		$f->setToken("id={$reqToken['Token']['id']}", "Secret={$reqToken['Token']['Secret']}");
-                    		$token = $f->auth_getAccessToken();	// The results of this call is what your application needs to store.
-
-                    		// Set the Access token for use by phpSmug.
-                    		$f->setToken( "id={$token['Token']['id']}", "Secret={$token['Token']['Secret']}" );
-
-                    		// Get list of public albums
-                    		$albums = $f->albums_get( 'Heavy=True' );
-                    		// Get list of public images and other useful information
-                    		$images = $f->images_get( "AlbumID={$albums['0']['id']}", "AlbumKey={$albums['0']['Key']}", "Heavy=1" );
-                    		// Display the thumbnails and link to the Album page for each image
-                    		foreach ( $images['Images'] as $image ) {
-                    			echo '<a href="'.$image['URL'].'"><img src="'.$image['TinyURL'].'" title="'.$image['Caption'].'" alt="'.$image['id'].'" /></a>';
-                    		}
-                    	}
-
-                    ?>
-
-                </td>
-            </tr>
-        </table>
-        <p class="submit">
-            <input type="submit" class="button-primary" value="Save" />
-        </p>
-    </form>
+    <div class="pydsmug_reset">
+        <form method="post" action="options.php">
+            <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+            <input type="hidden" name="pyd_smug_api" value="" />
+            <input type="hidden" name="pyd_smug_api_progress" value="" />
+            <p class="submit">
+                <input type="submit" class="button-secondary" value="Reset SmugMug Settings" />
+            </p>
+        </form>
+    </div>
     <?php
+
+        /*-----------------------------------------------------------------------------------*/
+        /* oAuth process start at the bottom of the page with the last else  */
+        /* Now that we have the OAUth credentials we can make a settings page  */
+        /* First step is to allow users to filter categories  */
+        /*-----------------------------------------------------------------------------------*/
+
+        if ( $pydsmug_progress == 4 ) {
+            print_r( $pydsmug_api );
+            echo '<br />';
+            print_r( $pydsmug_cats );
+
+            try {
+                $pydsmug_pydapi->setToken( "id={$pydsmug_api['api']['id']}", "Secret={$pydsmug_api['api']['Secret']}" );
+                $categories = $pydsmug_pydapi->categories_get( 'NickName=' . $pydsmug_api[ 'api' ][ 'NickName' ] );
+                ?>
+
+            <form method="post" action="options.php">
+                <?php settings_fields( 'pyd-smugslider-settings-group' ); ?>
+                <h3>SmugMug Categories</h3>
+                <table class="form-table">
+                    <tr valign="top">
+                        <td>
+                            <?php
+
+                            echo '<p><b>Leave all unchecked to use every category OR select individual categories to use below</b></p>';
+                            echo '<p><b>User Categories</b></p>';
+                            foreach ( $categories as $category => $categoryvalue ) {
+                                if ( $categoryvalue[ 'Type' ] == 'User' ) {
+                                    ?>
+
+                                    <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php checked( $pydsmug_cats[ $categoryvalue[ 'id' ] ], $categoryvalue[ 'id' ] ); ?> />
+                                    <label for="<?php echo $categoryvalue[ 'id' ] ?>">
+                                        <?php echo $categoryvalue[ 'Name' ] ?>
+                                    </label>
+                                    <br />
+                                    <?php
+                                }
+                            }
+
+                            echo '<p><b>SmugMug Categories</b></p>';
+                            foreach ( $categories as $category => $categoryvalue ) {
+                                if ( $categoryvalue[ 'Type' ] == 'SmugMug' ) {
+                                    ?>
+
+                                    <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php checked( $pydsmug_cats[ $categoryvalue[ 'id' ] ], $categoryvalue[ 'id' ] ); ?> />
+                                    <label for="<?php echo $categoryvalue[ 'id' ] ?>">
+                                        <?php echo $categoryvalue[ 'Name' ] ?>
+                                    </label>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+                <p class="submit">
+                    <input type="submit" class="button-primary" value="Save" />
+                </p>
+            </form>
+            <?php
+
+            } catch ( Exception $e ) {
+                echo "{$e->getMessage()} (Error Code: {$e->getCode()})";
+            }
+        }
+
+
+        /*-----------------------------------------------------------------------------------*/
+        /* Step 3 in API OAuth approval */
+        /* Grab the OAuth credentials and save them to the options array for later use  */
+        /* Set the progress option to "4" */
+        /*-----------------------------------------------------------------------------------*/
+
+        elseif ( $pydsmug_progress == 3 ) {
+
+            //Use the Request token obtained to get an access token
+            $pydsmug_pydapi->setToken( "id={$pydsmug_api['temp']['id']}", "Secret={$pydsmug_api['temp']['key']}" );
+            $token = $pydsmug_pydapi->auth_getAccessToken();
+            ?>
+
+        <form method="post" action="options.php">
+            <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+            <input type="hidden" name="pyd_smug_api[temp][id]" value="" />
+            <input type="hidden" name="pyd_smug_api[temp][key]" value="" />
+            <input type="hidden" name="pyd_smug_api[api][id]" value="<?php echo $token[ 'Token' ][ 'id' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][Secret]" value="<?php echo $token[ 'Token' ][ 'Secret' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][Access]" value="<?php echo $token[ 'Token' ][ 'Access' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][Permissions]" value="<?php echo $token[ 'Token' ][ 'Permissions' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][User]" value="<?php echo $token[ 'User' ][ 'id' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][DisplayName]" value="<?php echo $token[ 'User' ][ 'DisplayName' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][NickName]" value="<?php echo $token[ 'User' ][ 'NickName' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][URL]" value="<?php echo $token[ 'User' ][ 'URL' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][AccountStatus]" value="<?php echo $token[ 'User' ][ 'AccountStatus' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][AccountType]" value="<?php echo $token[ 'User' ][ 'AccountType' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][FileSizeLimit]" value="<?php echo $token[ 'User' ][ 'FileSizeLimit' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[api][SmugVault]" value="<?php echo $token[ 'User' ][ 'SmugVault' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api_progress" value="4" />
+            <p class="submit">
+                <input type="submit" class="button-primary" id="formButton" value="Got the key" />
+            </p>
+        </form>
+
+
+        <script language="javascript">
+            document.getElementById("formButton").click();
+        </script>
+
+
+        <div class="pydsmug_reset">
+            <form method="post" action="options.php">
+                <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+                <input type="hidden" name="pyd_smug_api" value="" />
+                <input type="hidden" name="pyd_smug_api_progress" value="" />
+                <p class="submit">
+                    <input type="submit" class="button-secondary" value="Reset SmugMug Settings" />
+                </p>
+            </form>
+        </div>
+
+
+        <?php
+
+        }
+
+        /*-----------------------------------------------------------------------------------*/
+        /* Step 2 in API OAuth approval */
+        /* Using the temp ID and Key go out to SmugMug and request approval */
+        /* Need to save these to options becuase WP clears all $_SESSION[]  */
+        /* Set the progress option to "3" */
+        /*-----------------------------------------------------------------------------------*/
+
+        elseif ( $pydsmug_progress == 2 ) {
+
+            echo '<h2>Step 1:</h2>';
+            echo "<p><a href='https://secure.smugmug.com/services/oauth/authorize.mg?Access=Full&Permissions=Add&oauth_token=" . $pydsmug_api[ 'temp' ][ 'id' ] . "' class='button-primary'  target='_blank'>Click here to log into SmugMug to approve access</a></p>";
+            echo '<h2>Step 2:</h2>';
+
+            ?>
+
+        <form method="post" action="options.php">
+            <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+            <table class="form-table">
+                <input type="hidden" name="pyd_smug_api[temp][id]" value="<?php echo $pydsmug_api[ 'temp' ][ 'id' ] ?>" />
+                <input type="hidden" name="pyd_smug_api[temp][key]" value="<?php echo $pydsmug_api[ 'temp' ][ 'key' ] ?>" />
+                <input type="hidden" name="pyd_smug_api_progress" value="3" />
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Authorization Completed, let's finalize this" />
+            </p>
+        </form>
+
+        <?php
+        }
+
+
+        /*-----------------------------------------------------------------------------------*/
+        /* Step 1 in API OAuth approval */
+        /* Grab the temp ID and Key from SmugMug and save it in an options array */
+        /* Set the progress option to "2" */
+        /*-----------------------------------------------------------------------------------*/
+
+        else {
+            print_r( $pydsmug_api );
+            // Step 1: Get a Request Token
+            $d = $pydsmug_pydapi->auth_getRequestToken();
+            ?>
+
+        <form method="post" action="options.php">
+            <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+            <input type="hidden" name="pyd_smug_api[temp][id]" value="<?php echo $d[ 'Token' ][ 'id' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api[temp][key]" value="<?php echo $d[ 'Token' ][ 'Secret' ]; ?>" />
+            <input type="hidden" name="pyd_smug_api_progress" value="2" />
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Start Activation With SmugMug" />
+            </p>
+        </form>
+        <?php
+        }
+
         echo '</div>';
     }
+
 
     /*-----------------------------------------------------------------------------------*/
     /* Create settings menu for our functions */

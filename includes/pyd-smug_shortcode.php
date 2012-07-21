@@ -12,7 +12,8 @@
     add_shortcode( 'pydsmugmugslider', 'pyd_smugslider_shortcode' );
 
     function pyd_smugslider_shortcode( $atts ) {
-        global $add_my_script;
+        global $add_my_script, $pydsmug_pydapi, $pydsmug_api;
+        $add_my_script = true;
 
         extract(
             shortcode_atts(
@@ -24,26 +25,12 @@
             )
         );
         ob_start();
-        $add_my_script = true;
-
-        $pydsmug_api      = get_option( 'pyd_smug_api' );
-        $pydsmug_secret   = get_option( 'pyd_smug_api_secret' );
-        $pydsmug_appname  = get_option( 'pyd_smug_app_name' );
-        $pydsmug_url      = get_option( 'pyd_smug_app_url' );
-        $pydsmug_nickname = get_option( 'pyd_smug_nickname' );
-        $pydsmug_cats     = get_option( 'pyd_smug_cats' );
-
 
         try {
-            $f = new phpSmug("APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=SmugMug Slider/1.1 (http://pokayoke.co)>", "OAuthSecret=99460e933382584b6e6cebfb392f749d");
-            //$f = new phpSmug( 'APIKey=' . $pydsmug_api, 'AppName=' . $pydsmug_appname . '/1 (' . $pydsmug_url . ')>' );
-            $f->login();
-            $images = $f->images_get( 'AlbumID=' . $albumid, 'AlbumKey=' . $albumkey, "Heavy=1" );
-            $images = ( $f->APIVer == "1.2.2" ) ? $images[ 'Images' ] : $images;
+            $pydsmug_pydapi->setToken( "id={$pydsmug_api['api']['id']}", "Secret={$pydsmug_api['api']['Secret']}" );
 
-            //echo '<pre>';
-            //print_r($images);
-            // echo '</pre>';
+            $images = $pydsmug_pydapi->images_get( 'AlbumID=' . $albumid, 'AlbumKey=' . $albumkey, "Heavy=1" );
+            $images = ( $pydsmug_pydapi->APIVer == "1.2.2" ) ? $images[ 'Images' ] : $images;
 
             if ( $images ) {
                 if ( $albumtype == 'slider' ) {
@@ -80,7 +67,6 @@
     /*-----------------------------------------------------------------------------------*/
 
     add_filter( 'media_upload_tabs', 'pydsmug_upload_tab' );
-
     function pydsmug_upload_tab( $tabs ) {
         $newtab = array( 'pydsmug_insert_tab' => __( 'SmugMug', 'insertgmap' ) );
         return array_merge( $tabs, $newtab );
@@ -88,29 +74,17 @@
 
 
     add_action( 'media_upload_pydsmug_insert_tab', 'pydsmug_media_upload_tab' );
-
     function pydsmug_media_upload_tab() {
         return wp_iframe( 'pydsmug_media_upload_form', $errors );
     }
 
     function pydsmug_media_upload_form() {
-        global $add_my_script;
-
+        global $add_my_script, $pydsmug_pydapi, $pydsmug_cats, $pydsmug_api;
         $add_my_script = true;
 
-        $pydsmug_api      = get_option( 'pyd_smug_api' );
-        $pydsmug_secret   = get_option( 'pyd_smug_api_secret' );
-        $pydsmug_appname  = get_option( 'pyd_smug_app_name' );
-        $pydsmug_url      = get_option( 'pyd_smug_app_url' );
-        $pydsmug_nickname = get_option( 'pyd_smug_nickname' );
-        $pydsmug_cats     = get_option( 'pyd_smug_cats' );
-
-
         try {
-            $f = new phpSmug( 'APIKey=' . $pydsmug_api, 'AppName=' . $pydsmug_appname . '/1 (' . $pydsmug_url . ')>' );
-
-            $f->login();
-            $albums = $f->albums_get( 'NickName=' . $pydsmug_nickname );
+            $pydsmug_pydapi->setToken( "id={$pydsmug_api['api']['id']}", "Secret={$pydsmug_api['api']['Secret']}" );
+            $albums = $pydsmug_pydapi->albums_get( 'NickName=' . $pydsmug_api[ 'api' ][ 'NickName' ] );
             ?>
 
         <script>
@@ -186,5 +160,4 @@
         } catch ( Exception $e ) {
             echo "{$e->getMessage()} (Error Code: {$e->getCode()})";
         }
-
     }

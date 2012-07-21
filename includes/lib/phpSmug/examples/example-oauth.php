@@ -74,7 +74,13 @@ try {
 		// Step 3: Use the Request token obtained in step 1 to get an access token
 		$f->setToken("id={$reqToken['Token']['id']}", "Secret={$reqToken['Token']['Secret']}");
 		$token = $f->auth_getAccessToken();	// The results of this call is what your application needs to store.
-		
+
+
+
+
+
+
+
 		// Set the Access token for use by phpSmug.   
 		$f->setToken( "id={$token['Token']['id']}", "Secret={$token['Token']['Secret']}" );
 

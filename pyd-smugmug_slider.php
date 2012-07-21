@@ -8,9 +8,11 @@
      Author URI: http://pokayoke.co
     */
 
+
     /*-----------------------------------------------------------------------------------*/
     /* Bring in required files and scripts */
     /*-----------------------------------------------------------------------------------*/
+
     require_once( dirname( __FILE__ ) . '/includes/pyd-settings.php' );
     require_once( dirname( __FILE__ ) . '/includes/lib/phpSmug/phpSmug.php' );
     require_once( dirname( __FILE__ ) . '/includes/pyd-smug_shortcode.php' );
@@ -49,16 +51,22 @@
     /* Call register settings function */
     /*-----------------------------------------------------------------------------------*/
 
-
     function pyd_smugslider_settings() {
 
-        register_setting( 'pyd-smugslider-settings-group', 'pyd_smug_api' );
-        register_setting( 'pyd-smugslider-settings-group', 'pyd_smug_api_secret' );
-        register_setting( 'pyd-smugslider-settings-group', 'pyd_smug_app_name' );
-        register_setting( 'pyd-smugslider-settings-group', 'pyd_smug_app_url' );
-        register_setting( 'pyd-smugslider-settings-group', 'pyd_smug_nickname' );
+        register_setting( 'pyd-smugslider-api-group', 'pyd_smug_api' );
+        register_setting( 'pyd-smugslider-api-group', 'pyd_smug_api_progress' );
         register_setting( 'pyd-smugslider-settings-group', 'pyd_smug_cats' );
 
     }
 
     add_action( 'admin_init', 'pyd_smugslider_settings' );
+
+
+    /*-----------------------------------------------------------------------------------*/
+    /* Setup functions to use */
+    /*-----------------------------------------------------------------------------------*/
+
+    $pydsmug_api      = get_option( 'pyd_smug_api' );
+    $pydsmug_progress = get_option( 'pyd_smug_api_progress' );
+    $pydsmug_cats     = get_option( 'pyd_smug_cats' );
+    $pydsmug_pydapi = new phpSmug( "APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=Poka Yoke Design", "OAuthSecret=99460e933382584b6e6cebfb392f749d" );
