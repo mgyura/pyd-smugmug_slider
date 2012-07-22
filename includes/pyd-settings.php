@@ -11,24 +11,12 @@
     /*-----------------------------------------------------------------------------------*/
 
     function pyd_smugslider_option_settings() {
-        global $add_my_script, $pydsmug_pydapi, $pydsmug_api, $pydsmug_progress, $pydsmug_cats;
+        global $add_my_script, $pydsmug_pydapi, $pydsmug_api, $pydsmug_progress, $pydsmug_cats, $pydsmug_slider;
         $add_my_script = true;
 
         echo '<div class="wrap">';
         echo '<h2>SmugMug Slider Settings</h2>';
-        ?>
 
-    <div class="pydsmug_reset">
-        <form method="post" action="options.php">
-            <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
-            <input type="hidden" name="pyd_smug_api" value="" />
-            <input type="hidden" name="pyd_smug_api_progress" value="" />
-            <p class="submit">
-                <input type="submit" class="button-secondary" value="Reset SmugMug Settings" />
-            </p>
-        </form>
-    </div>
-    <?php
 
         /*-----------------------------------------------------------------------------------*/
         /* oAuth process start at the bottom of the page with the last else  */
@@ -40,6 +28,8 @@
             print_r( $pydsmug_api );
             echo '<br />';
             print_r( $pydsmug_cats );
+            echo '<br />';
+            print_r( $pydsmug_slider );
 
             try {
                 $pydsmug_pydapi->setToken( "id={$pydsmug_api['api']['id']}", "Secret={$pydsmug_api['api']['Secret']}" );
@@ -85,8 +75,138 @@
                         </td>
                     </tr>
                 </table>
+                <?php
+
+
+                /*-----------------------------------------------------------------------------------*/
+                /* Create settings for the image slider */
+                /*-----------------------------------------------------------------------------------*/
+
+                echo '<h3>Image Slider Options</h3>';
+                ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Slider Animation: Fade or Slide: </th>
+                        <td>
+                            <select name="pyd_smug_slider[animate]">
+                                <option value="fade" <?php selected( $pydsmug_slider[ 'animate' ], 'fade' ); ?>> Fade </option>
+                                <option value="slide" <?php selected( $pydsmug_slider[ 'animate' ], 'slide' ); ?>> Slide </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Smooth Height Adjustment: </th>
+                        <td>
+                            <select name="pyd_smug_slider[smoothheight]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'smoothheight' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'smoothheight' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Show Location Markers: </th>
+                        <td>
+                            <select name="pyd_smug_slider[locationmarkers]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'locationmarkers' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'locationmarkers' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Show Prev/Next Arrows: </th>
+                        <td>
+                            <select name="pyd_smug_slider[nextarrows]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'nextarrows' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'nextarrows' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Loop Slide Show: </th>
+                        <td>
+                            <select name="pyd_smug_slider[loopit]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'loopit' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'loopit' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Randomize the Images: </th>
+                        <td>
+                            <select name="pyd_smug_slider[randomit]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'randomit' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'randomit' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Pause Slide Show on Mouse Hover: </th>
+                        <td>
+                            <select name="pyd_smug_slider[pausehover]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'pausehover' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'pausehover' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Start Slide Show Automatically: </th>
+                        <td>
+                            <select name="pyd_smug_slider[startup]">
+                                <option value="1" <?php selected( $pydsmug_slider[ 'startup' ], '1' ); ?>> True </option>
+                                <option value="" <?php selected( $pydsmug_slider[ 'startup' ], '' ); ?>> False </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Speed of the Slide Show Cycling: </th>
+                        <td>
+                            <select name="pyd_smug_slider[cycletime]">
+                                <option value="1000" <?php selected( $pydsmug_slider[ 'cycletime' ], '1000' ); ?>> 1 sec </option>
+                                <option value="2000" <?php selected( $pydsmug_slider[ 'cycletime' ], '2000' ); ?>> 2 sec </option>
+                                <option value="3000" <?php selected( $pydsmug_slider[ 'cycletime' ], '3000' ); ?>> 3 sec </option>
+                                <option value="4000" <?php selected( $pydsmug_slider[ 'cycletime' ], '4000' ); ?>> 4 sec </option>
+                                <option value="5000" <?php selected( $pydsmug_slider[ 'cycletime' ], '5000' ); ?>> 5 sec </option>
+                                <option value="6000" <?php selected( $pydsmug_slider[ 'cycletime' ], '6000' ); ?>> 6 sec </option>
+                                <option value="7000" <?php selected( $pydsmug_slider[ 'cycletime' ], '7000' ); ?>> 7 sec </option>
+                                <option value="8000" <?php selected( $pydsmug_slider[ 'cycletime' ], '8000' ); ?>> 8 sec </option>
+                                <option value="9000" <?php selected( $pydsmug_slider[ 'cycletime' ], '9000' ); ?>> 9 sec </option>
+                                <option value="10000" <?php selected( $pydsmug_slider[ 'cycletime' ], '10000' ); ?>> 10 sec </option>
+                                <option value="11000" <?php selected( $pydsmug_slider[ 'cycletime' ], '11000' ); ?>> 11 sec </option>
+                                <option value="12000" <?php selected( $pydsmug_slider[ 'cycletime' ], '12000' ); ?>> 12 sec </option>
+                                <option value="13000" <?php selected( $pydsmug_slider[ 'cycletime' ], '13000' ); ?>> 13 sec </option>
+                                <option value="14000" <?php selected( $pydsmug_slider[ 'cycletime' ], '14000' ); ?>> 14 sec </option>
+                                <option value="15000" <?php selected( $pydsmug_slider[ 'cycletime' ], '15000' ); ?>> 15 sec </option>
+                                <option value="20000" <?php selected( $pydsmug_slider[ 'cycletime' ], '20000' ); ?>> 20 sec </option>
+                                <option value="30000" <?php selected( $pydsmug_slider[ 'cycletime' ], '30000' ); ?>> 30 sec </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Speed of Animations: </th>
+                        <td>
+                            <select name="pyd_smug_slider[animatetime]">
+                                <option value="500" <?php selected( $pydsmug_slider[ 'animatetime' ], '500' ); ?>> .5 sec </option>
+                                <option value="600" <?php selected( $pydsmug_slider[ 'animatetime' ], '600' ); ?>> .6 sec </option>
+                                <option value="700" <?php selected( $pydsmug_slider[ 'animatetime' ], '700' ); ?>> .7 sec </option>
+                                <option value="800" <?php selected( $pydsmug_slider[ 'animatetime' ], '800' ); ?>> .8 sec </option>
+                                <option value="900" <?php selected( $pydsmug_slider[ 'animatetime' ], '900' ); ?>> .9 sec </option>
+                                <option value="1000" <?php selected( $pydsmug_slider[ 'animatetime' ], '1000' ); ?>> 1 sec </option>
+                                <option value="1500" <?php selected( $pydsmug_slider[ 'animatetime' ], '1500' ); ?>> 1.5 sec </option>
+                                <option value="2000" <?php selected( $pydsmug_slider[ 'animatetime' ], '2000' ); ?>> 2 sec </option>
+                                <option value="3000" <?php selected( $pydsmug_slider[ 'animatetime' ], '3000' ); ?>> 3 sec </option>
+                                <option value="4000" <?php selected( $pydsmug_slider[ 'animatetime' ], '4000' ); ?>> 4 sec </option>
+                                <option value="5000" <?php selected( $pydsmug_slider[ 'animatetime' ], '5000' ); ?>> 5 sec </option>
+                                <option value="6000" <?php selected( $pydsmug_slider[ 'animatetime' ], '6000' ); ?>> 6 sec </option>
+                                <option value="7000" <?php selected( $pydsmug_slider[ 'animatetime' ], '7000' ); ?>> 7 sec </option>
+                                <option value="8000" <?php selected( $pydsmug_slider[ 'animatetime' ], '8000' ); ?>> 8 sec </option>
+                                <option value="9000" <?php selected( $pydsmug_slider[ 'animatetime' ], '9000' ); ?>> 9 sec </option>
+                                <option value="10000" <?php selected( $pydsmug_slider[ 'animatetime' ], '10000' ); ?>> 10 sec </option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
                 <p class="submit">
-                    <input type="submit" class="button-primary" value="Save" />
+                    <input type="submit" class="button-primary" value="Save All" />
                 </p>
             </form>
             <?php
@@ -95,12 +215,35 @@
                 echo "{$e->getMessage()} (Error Code: {$e->getCode()})";
             }
 
-            /*-----------------------------------------------------------------------------------*/
-            /* Create settings for the image slider */
-            /*-----------------------------------------------------------------------------------*/
+            ?>
 
-            echo '<h3>Image Slider Options</h3>';
+        <hr />
+        <div class="pydsmug_reset">
+            <p>If you want to reset the selected categories and slider settings, click this button</p>
+            <form method="post" action="options.php">
+                <?php settings_fields( 'pyd-smugslider-settings-group' ); ?>
+                <input type="hidden" name="pyd_smug_cats" value="" />
+                <input type="hidden" name="pyd_smug_slider" value="" />
+                <p class="submit">
+                    <input type="submit" class="button-secondary" value="Reset SmugMug Settings" />
+                </p>
+            </form>
+        </div>
 
+        <div class="pydsmug_reset">
+            <p>If you want to link to another AmuMug account, or have an error with the current SmugMug Slider authorization, click this button</p>
+            <form method="post" action="options.php">
+                <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+                <input type="hidden" name="pyd_smug_api" value="" />
+                <input type="hidden" name="pyd_smug_api_progress" value="" />
+                <p class="submit">
+                    <input type="submit" class="button-secondary" value="Delete SmugMug Authorization" />
+                </p>
+            </form>
+        </div>
+        <hr class="pydClear" />
+
+        <?php
         }
 
 

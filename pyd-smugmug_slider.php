@@ -20,9 +20,15 @@
 
     add_action( 'wp_enqueue_scripts', 'pyd_smugslider_register_scripts' );
     add_action( 'wp_footer', 'pyd_smugslider_print_scripts' );
+    add_action( 'admin_enqueue_scripts', 'pyd_smugslider_admin_scripts' );
+
+    function pyd_smugslider_admin_scripts() {
+        wp_register_style( 'pydsmugstyles', plugins_url( '/includes/lib/style.css', __FILE__ ) );
+        wp_enqueue_style( 'pydsmugstyles' );
+    }
 
     function pyd_smugslider_register_scripts() {
-        wp_register_style( 'pydsmugstyles', plugins_url( '/includes/lib/FlexSlider/flexslider.css', __FILE__ ) );
+        wp_register_style( 'pydsmugsliderstyles', plugins_url( '/includes/lib/FlexSlider/flexslider.css', __FILE__ ) );
 
         wp_register_script( 'pydsmugflex', plugins_url( '/includes/lib/FlexSlider/jquery.flexslider.js', __FILE__ ), array( 'jquery' ), 1, true );
 
@@ -31,21 +37,29 @@
     }
 
     function pyd_smugslider_print_scripts() {
-        global $add_my_script;
+        global $add_my_script, $pydsmug_slider;
 
         if ( !$add_my_script ) {
             return;
         }
 
-        wp_enqueue_style( 'pydsmugstyles' );
+        wp_enqueue_style( 'pydsmugsliderstyles' );
         wp_enqueue_script( 'jquery' );
         wp_enqueue_script( 'pydsmugflex' );
         wp_enqueue_script( 'pydsmugflexOptions' );
 
         $pydsmug_slider_variables = array(
-            'animate' => 'fade',
-            'smoothtall' => true,
-            'locationicon' => true
+            'animate' => $pydsmug_slider['animate'],
+            'startup' => $pydsmug_slider['startup'],
+            'smoothtall' => $pydsmug_slider[ 'smoothheight' ],
+            'locationicon' => $pydsmug_slider[ 'locationmarkers' ],
+            'navdirection' => $pydsmug_slider[ 'nextarrows' ],
+            'loopit' => $pydsmug_slider[ 'loopit' ],
+            'slidespeed' => $pydsmug_slider[ 'cycletime' ],
+            'animatespeed' => $pydsmug_slider[ 'animatetime' ],
+            'delayinit' => 0,
+            'randomizeit' => $pydsmug_slider[ 'randomit' ],
+            'hoverpause' => $pydsmug_slider[ 'pausehover' ],
         );
 
         wp_localize_script( 'pydsmugflexOptions', 'pydsmug', $pydsmug_slider_variables );
