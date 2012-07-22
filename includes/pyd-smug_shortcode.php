@@ -20,7 +20,9 @@
                 array(
                      'albumid'   => '',
                      'albumkey'  => '',
-                     'albumtype' => 'slider'
+                     'albumtype' => 'slider',
+                     'imagesize' => 'MediumURL',
+                     'imagelink' => 'LightboxURL'
                 ), $atts
             )
         );
@@ -32,22 +34,35 @@
             $images = $pydsmug_pydapi->images_get( 'AlbumID=' . $albumid, 'AlbumKey=' . $albumkey, "Heavy=1" );
             $images = ( $pydsmug_pydapi->APIVer == "1.2.2" ) ? $images[ 'Images' ] : $images;
 
+
+            echo '<pre>';
+            print_r( $images );
+            echo '</pre>';
+
+
             if ( $images ) {
                 if ( $albumtype == 'slider' ) {
-
                     $retval = '<div class="flex-container"><div id="slider" class="flexslider"><ul class="slides">';
-
                     foreach ( $images as $image ) {
-                        $retval .= '<li><div class="smugPading"><a href="' . $image[ 'LightboxURL' ] . '" target="_blank"><img src="' . $image[ 'MediumURL' ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'id' ] . '" /></a></div></li>';
+                        if($imagelink == '#') {
+                            $retval .= '<li><div class="smugPading"><img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" /></div></li>';
+                        }
+                        else {
+                            $retval .= '<li><div class="smugPading"><a href="' . $image[ $imagelink ] . '" target="_blank"><img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" /></a></div></li>';
+                        }
                     }
-
                     $retval .= '</ul></div></div>';
-
                     return $retval;
                 }
+
                 else {
                     foreach ( $images as $image ) {
-                        echo '<a href="' . $image[ 'LightboxURL' ] . '" target="_blank"><img src="' . $image[ 'ThumbURL' ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'id' ] . '" /></a>';
+                        if($imagelink == '#') {
+                            echo '<img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" />';
+                        }
+                        else {
+                            echo '<a href="' . $image[ $imagelink ] . '" target="_blank"><img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" /></a>';
+                        }
                     }
                 }
             }
@@ -101,8 +116,20 @@
                     return;
                 }
 
+                var image_size = jQuery("#pydsmug_image_size").val();
+                if (image_size == "") {
+                    alert("<?php _e( "Please select a size for your image", "pydnet" ) ?>");
+                    return;
+                }
 
-                parent.send_to_editor("[pydsmugmugslider " + album_id + "  albumtype=\"" + album_type + "\" ]");
+                var image_link = jQuery("#pydsmug_image_link").val();
+                if (image_link == "") {
+                    alert("<?php _e( "Please select a link for your image", "pydnet" ) ?>");
+                    return;
+                }
+
+
+                parent.send_to_editor("[pydsmugmugslider " + album_id + "  albumtype=\"" + album_type + "\" imagesize=\"" + image_size + "\" imagelink=\"" + image_link + "\" ]");
             }
         </script>
 
@@ -144,6 +171,25 @@
                                 <option value="">Select how to display your gallery</option>
                                 <option value="slider">Display gallery as a slider</option>
                                 <option value="tab">Display gallery as a thumbnails</option>
+                            </select>
+                        </p>
+                        <p>Select the image size and link: <br />
+                            <select id="pydsmug_image_size">
+                                <option value=""> Select the image size for your gallery display </option>
+                                <option value="OriginalURL"> Original image size</option>
+                                <option value="LargeURL"> Large image size</option>
+                                <option value="MediumURL"> Medium image size</option>
+                                <option value="SmallURL"> Small image size</option>
+                                <option value="ThumbURL"> Thumb image size</option>
+                            </select>
+                        </p>
+                        <p>
+                            <select id="pydsmug_image_link">
+                                <option value=""> Select where your image should link to </option>
+                                <option value="#"> No link </option>
+                                <option value="OriginalURL"> Original image size</option>
+                                <option value="LightboxURL"> Lightbox </option>
+                                <option value="LargeURL"> Large image size</option>
                             </select>
                         </p>
                     </div>
