@@ -25,11 +25,6 @@
         /*-----------------------------------------------------------------------------------*/
 
         if ( $pydsmug_progress == 4 ) {
-            print_r( $pydsmug_api );
-            echo '<br />';
-            print_r( $pydsmug_cats );
-            echo '<br />';
-            print_r( $pydsmug_slider );
 
             try {
                 $pydsmug_pydapi->setToken( "id={$pydsmug_api['api']['id']}", "Secret={$pydsmug_api['api']['Secret']}" );
@@ -45,36 +40,48 @@
                             <?php
 
                             echo '<p><b>Leave all unchecked to use every category OR select individual categories to use below</b></p>';
-                            echo '<p><b>User Categories</b></p>';
+                            echo '<div class="pydsmug_cats"><h4>User Categories</h4>';
                             foreach ( $categories as $category => $categoryvalue ) {
                                 if ( $categoryvalue[ 'Type' ] == 'User' ) {
                                     ?>
-
-                                    <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php checked( $pydsmug_cats[ $categoryvalue[ 'id' ] ], $categoryvalue[ 'id' ] ); ?> />
-                                    <label for="<?php echo $categoryvalue[ 'id' ] ?>">
-                                        <?php echo $categoryvalue[ 'Name' ] ?>
-                                    </label>
-                                    <br />
+                                    <div class="pydsmug_checkbox">
+                                        <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php if ( isset( $pydsmug_cats[ $categoryvalue[ 'id' ] ] ) ) {
+                                            echo 'checked="checked"';
+                                        } ?> />
+                                        <label for="<?php echo $categoryvalue[ 'id' ] ?>">
+                                            <?php echo $categoryvalue[ 'Name' ] ?>
+                                        </label>
+                                    </div>
                                     <?php
                                 }
                             }
+                            echo '<div class="pydClear"></div></div><div class="pydsmug_cats">';
 
-                            echo '<p><b>SmugMug Categories</b></p>';
+                            echo '<h4>SmugMug Categories</h4>';
                             foreach ( $categories as $category => $categoryvalue ) {
                                 if ( $categoryvalue[ 'Type' ] == 'SmugMug' ) {
                                     ?>
 
-                                    <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php checked( $pydsmug_cats[ $categoryvalue[ 'id' ] ], $categoryvalue[ 'id' ] ); ?> />
-                                    <label for="<?php echo $categoryvalue[ 'id' ] ?>">
-                                        <?php echo $categoryvalue[ 'Name' ] ?>
-                                    </label>
+                                    <div class="pydsmug_checkbox">
+                                        <input type="checkbox" name="pyd_smug_cats[<?php echo $categoryvalue[ 'id' ] ?>]" id="<?php echo $categoryvalue[ 'id' ] ?>" value="<?php echo $categoryvalue[ 'id' ] ?>" <?php if ( isset( $pydsmug_cats[ $categoryvalue[ 'id' ] ] ) ) {
+                                            echo 'checked="checked"';
+                                        } ?> />
+                                        <label for="<?php echo $categoryvalue[ 'id' ] ?>">
+                                            <?php echo $categoryvalue[ 'Name' ] ?>
+                                        </label>
+                                    </div>
                                     <?php
                                 }
                             }
+                            echo '<div class="pydClear"></div></div>';
                             ?>
+
                         </td>
                     </tr>
                 </table>
+                <p class="submit">
+                    <input type="submit" class="button-primary" value="Save All" />
+                </p>
                 <?php
 
 
@@ -219,19 +226,18 @@
 
         <hr />
         <div class="pydsmug_reset">
-            <p>If you want to reset the selected categories and slider settings, click this button</p>
+            <p>If you want to reset the selected categories, click this button</p>
             <form method="post" action="options.php">
                 <?php settings_fields( 'pyd-smugslider-settings-group' ); ?>
                 <input type="hidden" name="pyd_smug_cats" value="" />
-                <input type="hidden" name="pyd_smug_slider" value="" />
                 <p class="submit">
-                    <input type="submit" class="button-secondary" value="Reset SmugMug Settings" />
+                    <input type="submit" class="button-secondary" value="Reset SmugMug Categories" />
                 </p>
             </form>
         </div>
 
         <div class="pydsmug_reset">
-            <p>If you want to link to another AmuMug account, or have an error with the current SmugMug Slider authorization, click this button</p>
+            <p>If you want to link to a different SmugMug account, or have an error with the current SmugMug Slider authorization, click this button</p>
             <form method="post" action="options.php">
                 <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
                 <input type="hidden" name="pyd_smug_api" value="" />
