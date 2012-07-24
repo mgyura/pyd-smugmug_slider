@@ -1,6 +1,6 @@
 === SmugMug Responsive Slider ===
 Contributors: mgyura
-Tags: SmugMug, images, responsive slider, pictures. smug mug
+Tags: SmugMug, images, responsive slider, pictures, smug mug
 Requires at least: 3.2
 Tested up to: 3.4
 Stable tag: 1.01
@@ -23,7 +23,6 @@ Using [FlexSlider](http://www.woothemes.com/flexslider/ "flexslider") and [phpSm
 5. Create or edit a page/post and use the add media > SmugMug tab to select your gallery.
 
 == Changelog ==
-
 
 = 1.01 =
 * Initial release
