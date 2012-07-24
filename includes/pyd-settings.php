@@ -1,6 +1,5 @@
 <?php
     /**
-     * Created by JetBrains PhpStorm.
      * User: mgyura
      * Date: 6/26/12
      */
@@ -266,6 +265,7 @@
             $token = $pydsmug_pydapi->auth_getAccessToken();
             ?>
 
+        <p>This page will automatically refresh in 5 seconds.  If it does not, click the below button.</p>
         <form method="post" action="options.php">
             <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
             <input type="hidden" name="pyd_smug_api[temp][id]" value="" />
@@ -294,16 +294,19 @@
         </script>
 
 
+        <hr />
         <div class="pydsmug_reset">
+            <p>If there was an error in the approval process, click this button to restart approval</p>
             <form method="post" action="options.php">
                 <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
                 <input type="hidden" name="pyd_smug_api" value="" />
                 <input type="hidden" name="pyd_smug_api_progress" value="" />
                 <p class="submit">
-                    <input type="submit" class="button-secondary" value="Reset SmugMug Settings" />
+                    <input type="submit" class="button-secondary" value="Delete SmugMug Authorization" />
                 </p>
             </form>
         </div>
+        <hr class="pydClear" />
 
 
         <?php
@@ -320,8 +323,10 @@
         elseif ( $pydsmug_progress == 2 ) {
 
             echo '<h2>Step 1:</h2>';
+            echo '<p>Click the button below to send a request to SmugMug for approval.  A new browser tab will open up and you will be asked to log into your SmugMug account and approve access for this app.</p>';
             echo "<p><a href='https://secure.smugmug.com/services/oauth/authorize.mg?Access=Full&Permissions=Add&oauth_token=" . $pydsmug_api[ 'temp' ][ 'id' ] . "' class='button-primary'  target='_blank'>Click here to log into SmugMug to approve access</a></p>";
             echo '<h2>Step 2:</h2>';
+            echo '<p>Once you have given this app permission to access your account, click the below button.  This will save the approval credentials to your WordPress database.</p>'
 
             ?>
 
@@ -336,6 +341,21 @@
                 <input type="submit" class="button-primary" value="Authorization Completed, let's finalize this" />
             </p>
         </form>
+
+        <hr />
+        <div class="pydsmug_reset">
+            <p>If there was an error in the approval process, click this button to restart approval</p>
+            <form method="post" action="options.php">
+                <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
+                <input type="hidden" name="pyd_smug_api" value="" />
+                <input type="hidden" name="pyd_smug_api_progress" value="" />
+                <p class="submit">
+                    <input type="submit" class="button-secondary" value="Delete SmugMug Authorization" />
+                </p>
+            </form>
+        </div>
+        <hr class="pydClear" />
+
 
         <?php
         }
@@ -353,6 +373,7 @@
             $d = $pydsmug_pydapi->auth_getRequestToken();
             ?>
 
+        <p>Before SmugMug Responsive Slider can be used it needs to have permission from your account to access photos.  Click the button below to start the approval process.  </p>
         <form method="post" action="options.php">
             <?php settings_fields( 'pyd-smugslider-api-group' ); ?>
             <input type="hidden" name="pyd_smug_api[temp][id]" value="<?php echo $d[ 'Token' ][ 'id' ]; ?>" />

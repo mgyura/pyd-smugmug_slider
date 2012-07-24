@@ -114,10 +114,10 @@
     /*-----------------------------------------------------------------------------------*/
 
 
-    function showMessage( $message ) {
-global $pydsmug_progress;
-        if ( !$pydsmug_progress ) {
-            echo '<div id="message" class="error"><p><strong>' . $message . '</strong></p></div>';
+    function showMessage( ) {
+        global $pydsmug_progress;
+        if ( $pydsmug_progress != 4 ) {
+            echo '<div id="message" class="error"><p><strong>SmugMug Responsive Slider needs to be authorized before use.  To start the process, please <a href="/wp-admin/options-general.php?page=smugmug-settings" title="authorize SmugMug Slider">click here</a></strong></p></div>';
         }
     }
 

@@ -35,20 +35,58 @@
             $images = ( $pydsmug_pydapi->APIVer == "1.2.2" ) ? $images[ 'Images' ] : $images;
 
 
-            echo '<pre>';
-            print_r( $images );
-            echo '</pre>';
+            /*-----------------------------------------------------------------------------------*/
+            /* Grab SmugMug images and dump into WP set_transient()  */
+            /*-----------------------------------------------------------------------------------*/
 
 
             if ( $images ) {
+
+                $pydsmug_get_transient = get_transient( 'pydsmug_albums_' . $albumid . '_' . $imagesize . '_' . $imagelink );
+
+                if ( !$pydsmug_get_transient  ) {
+
+                    //Grab the images from SmugMug, using the sizes chosen in the shortcode generator.
+                    foreach ( $images as $image => $imagevalue ) {
+
+                        /*
+                        * Took out.  This would upload the images to the local wp uploads folder.  -MG
+                        *
+                        * $image_resource[ 'id' ][ $imagevalue[ 'id' ] ] = imagecreatefromjpeg( $imagevalue[ $imagesize ] );
+                        * $upload_dir                         = wp_upload_dir();
+                        * $upload_file[ $imagevalue[ 'id' ] ] = $upload_dir[ 'path' ] . '/' . $imagevalue[ 'id' ] . '.jpg';
+                        * $pydsmug_saved_data[ 'url' ][ $imagevalue[ 'id' ] ]     = $upload_dir[ 'url' ] . '/' . $imagevalue[ 'id' ] . '.jpg';
+                        * imagejpeg( $image_resource[ 'id' ][ $imagevalue[ 'id' ] ], $upload_file[ $imagevalue[ 'id' ] ] );
+                        *
+                        */
+
+                        $pydsmug_saved_data[ $imagevalue[ 'id' ] ] = array(
+                            'image_url'     => $imagevalue[ $imagesize ],
+                            'image_link'    => $imagevalue[ $imagelink ],
+                            'image_caption' => $imagevalue[ 'Caption' ]
+                        );
+
+                        set_transient( 'pydsmug_albums_' . $albumid, $pydsmug_saved_data, 3600 );
+
+                    }
+                }
+
+                $images = get_transient( 'pydsmug_albums_' . $albumid );
+
+
+
+                /*-----------------------------------------------------------------------------------*/
+                /* Run the selected gallery as a slider or thumbs */
+                /*-----------------------------------------------------------------------------------*/
                 if ( $albumtype == 'slider' ) {
                     $retval = '<div class="flex-container"><div id="slider" class="flexslider"><ul class="slides">';
                     foreach ( $images as $image ) {
-                        if($imagelink == '#') {
-                            $retval .= '<li><div class="smugPading"><img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" /></div></li>';
+
+                        if ( $imagelink == '0' ) {
+                            $retval .= '<li><div class="smugPading"><img src="' . $image[ 'image_url' ] . '" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" /></div></li>';
                         }
                         else {
-                            $retval .= '<li><div class="smugPading"><a href="' . $image[ $imagelink ] . '" target="_blank"><img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" /></a></div></li>';
+                            $retval .= '<li><div class="smugPading"><a href="' . $image[ 'image_link' ] . '" target="_blank"><img src="' . $image[ 'image_url' ] . '" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" /></a></div></li>';
                         }
                     }
                     $retval .= '</ul></div></div>';
@@ -57,11 +95,11 @@
 
                 else {
                     foreach ( $images as $image ) {
-                        if($imagelink == '#') {
-                            echo '<img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" />';
+                        if ( $imagelink == '0' ) {
+                            echo '<img src="' . $image[ 'image_url' ] . '" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" />';
                         }
                         else {
-                            echo '<a href="' . $image[ $imagelink ] . '" target="_blank"><img src="' . $image[ $imagesize ] . '" title="' . $image[ 'Caption' ] . '" alt="' . $image[ 'Caption' ] . '" /></a>';
+                            echo '<a href="' . $image[ 'image_link' ] . '" target="_blank"><img src="' . $image[ 'image_url' ] . '" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" /></a>';
                         }
                     }
                 }
@@ -90,6 +128,8 @@
 
     add_action( 'media_upload_pydsmug_insert_tab', 'pydsmug_media_upload_tab' );
     function pydsmug_media_upload_tab() {
+        global $errors;
+
         return wp_iframe( 'pydsmug_media_upload_form', $errors );
     }
 
@@ -127,7 +167,6 @@
                     alert("<?php _e( "Please select a link for your image", "pydnet" ) ?>");
                     return;
                 }
-
 
                 parent.send_to_editor("[pydsmugmugslider " + album_id + "  albumtype=\"" + album_type + "\" imagesize=\"" + image_size + "\" imagelink=\"" + image_link + "\" ]");
             }
@@ -186,7 +225,7 @@
                         <p>
                             <select id="pydsmug_image_link">
                                 <option value=""> Select where your image should link to </option>
-                                <option value="#"> No link </option>
+                                <option value="0"> No link </option>
                                 <option value="OriginalURL"> Original image size</option>
                                 <option value="LightboxURL"> Lightbox </option>
                                 <option value="LargeURL"> Large image size</option>
