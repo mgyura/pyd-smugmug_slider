@@ -210,3 +210,11 @@ html[xmlns] .slides {
 div.flex-container div#slider.flexslider li {
     list-style: none;
 }
+
+
+/* Thumbs Styles
+*********************************/
+
+img.pydsmug_thumbnail {
+    margin: 10px;
+}

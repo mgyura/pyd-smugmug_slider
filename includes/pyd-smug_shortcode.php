@@ -26,9 +26,12 @@
                 ), $atts
             )
         );
-        ob_start();
+
 
         try {
+
+            ob_start();
+
             $pydsmug_pydapi->setToken( "id={$pydsmug_api['api']['id']}", "Secret={$pydsmug_api['api']['Secret']}" );
 
             $images = $pydsmug_pydapi->images_get( 'AlbumID=' . $albumid, 'AlbumKey=' . $albumkey, "Heavy=1" );
@@ -96,23 +99,23 @@
                 else {
                     foreach ( $images as $image ) {
                         if ( $imagelink == '0' ) {
-                            echo '<img src="' . $image[ 'image_url' ] . '" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" />';
+                            echo '<img src="' . $image[ 'image_url' ] . '" class="pydsmug_thumbnail" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" />';
                         }
                         else {
-                            echo '<a href="' . $image[ 'image_link' ] . '" target="_blank"><img src="' . $image[ 'image_url' ] . '" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" /></a>';
+                            echo '<a href="' . $image[ 'image_link' ] . '" target="_blank"><img src="' . $image[ 'image_url' ] . '" class="pydsmug_thumbnail" title="' . $image[ 'image_caption' ] . '" alt="' . $image[ 'image_caption' ] . '" /></a>';
                         }
                     }
                 }
             }
 
-            return;
+            $output_string = ob_get_contents();
+                    ob_end_clean();
+                    return $output_string;
 
         } catch ( Exception $e ) {
             echo "{$e->getMessage()} (Error Code: {$e->getCode()})";
         }
-        $output_string = ob_get_contents();
-        ob_end_clean();
-        return $output_string;
+
     }
 
     /*-----------------------------------------------------------------------------------*/
