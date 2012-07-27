@@ -1,5 +1,6 @@
 === SmugMug Responsive Slider ===
 Contributors: mgyura
+Donate link: http://gyura.com
 Tags: SmugMug, images, responsive slider, pictures, smug mug
 Requires at least: 3.2
 Tested up to: 3.4
@@ -13,6 +14,7 @@ A responsive image slider to display your SmugMug photos
 
 Using [FlexSlider](http://www.woothemes.com/flexslider/ "flexslider") and [phpSmug](http://phpsmug.com/ "phpSmug") this plugin allows you to drop in an image gallery from your SmugMug account to any post or page, either as a responsive slider or thumbnails.  It includes a shortcode generator and options panel.
 
+[vimeo http://vimeo.com/45771211]
 
 == Installation ==
 
@@ -22,7 +24,29 @@ Using [FlexSlider](http://www.woothemes.com/flexslider/ "flexslider") and [phpSm
 4. Change the setting to fit your needs.
 5. Create or edit a page/post and use the add media > SmugMug tab to select your gallery.
 
+== Screenshots ==
+
+1. **Responsive Slider** - SmugMug Responsive Slider can be put on any page or post with the shortcode generator.  It will resize the gallery to fit your screen size.
+2. **Thumbnail Gallery** - In addition to the slider, a thumbnail gallery can be placed on a page or a post.
+3. **Settings Screen** - The settings allow you to filter the galleries by category as well as set some default parameters for the slider.
+4. **Shortcode Generator** - No need to remember the shortcode.  Just select the SmugMug options tab in the upload/insert media area and select your options.
+
+== Frequently Asked Questions ==
+
+= Do I need a SmugMug account? =
+
+Yes.  This plugin pulls in from the photos you upload to your SMugMug account.
+
+= Will this work with another photo service =
+
+No.  There are many great plugins that work with other photo services.  Our aim is to give SmugMug photo users a way to tie in their favorite photos to WordPress
+
 == Changelog ==
 
 = 1.01 =
 * Initial release
+
+== Upgrade Notice ==
+
+= 1.01 =
+First tested release.
