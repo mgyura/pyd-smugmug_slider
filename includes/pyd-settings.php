@@ -368,7 +368,7 @@
         /*-----------------------------------------------------------------------------------*/
 
         else {
-            print_r( $pydsmug_api );
+
             // Step 1: Get a Request Token
             $d = $pydsmug_pydapi->auth_getRequestToken();
             ?>
