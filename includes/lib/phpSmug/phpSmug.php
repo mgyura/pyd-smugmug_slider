@@ -125,8 +125,8 @@ class phpSmug {
 		// Set the Application Name
 		$this->AppName = ( array_key_exists( 'AppName', $args ) ) ?  $args['AppName'] : 'Unknown Application';
 
-		// All calls to the API are done via POST using my own constructed httpRequest class
-		$this->req = new httpRequest();
+		// All calls to the API are done via POST using my own constructed pyd_httpRequest class
+		$this->req = new pyd_httpRequest();
 		$this->req->setConfig( array( 'adapter' => $this->adapter, 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
 		$this->req->setHeader( array( 'User-Agent' => "{$this->AppName} using phpSmug/{$this->version}", 'Content-Type' => 'application/x-www-form-urlencoded' ) );
     }
@@ -636,7 +636,7 @@ class phpSmug {
 		}
 
 		// Create a new object as we still need the other request object
-		$upload_req = new httpRequest();
+		$upload_req = new pyd_httpRequest();
         $upload_req->setMethod( 'PUT' );
 		$upload_req->setConfig( array( 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
 		$upload_req->setAdapter( $this->adapter );
@@ -910,7 +910,7 @@ interface PhpSmugRequestProcessor
 	public function getHeaders();
 }
 
-class httpRequest
+class pyd_httpRequest
 {
 	private $method = 'POST';
 	private $url;
@@ -984,7 +984,7 @@ class httpRequest
 	 * @param mixed			$config An array of options or a string name with a
 	 *						corresponding $value
 	 * @param mixed			$value
-	 * @return httpRequest
+	 * @return pyd_httpRequest
 	 */
 	public function setConfig( $config, $value = null )
     {

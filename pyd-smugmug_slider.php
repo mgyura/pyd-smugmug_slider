@@ -2,8 +2,8 @@
     /*
      Plugin Name: SmugMug Responsive Slider
      Plugin URI: http://gyura.com/smugmug-responsive-slider/
-     Description: Using <a href="http://www.woothemes.com/flexslider/" title="flexslider">FlexSlider</a> and <a href="http://phpsmug.com/" title="phpsmug">phpSmug</a> this plugin allows you to drop in an image gallery from your SmugMug account to any post or page, either as a responsive slider or thumbnails.  It includes a shortcode generator and options panel.
-     Version: 1.02
+     Description: Using FlexSlider and phpSmug this plugin allows you to drop in an image gallery from your SmugMug account to any post or page, either as a responsive slider or thumbnails.  It includes a shortcode generator and options panel.
+     Version: 1.03
      Author: Michael Gyura
      Author URI: http://gyura.com
     */
@@ -112,7 +112,7 @@
     /*-----------------------------------------------------------------------------------*/
 
 
-    function showMessage( ) {
+    function showMessage() {
         global $pydsmug_progress;
         if ( $pydsmug_progress != 4 ) {
             echo '<div id="message" class="error"><p><strong>SmugMug Responsive Slider needs to be authorized before use.  To start the process, please <a href="/wp-admin/options-general.php?page=smugmug-settings" title="authorize SmugMug Slider">click here</a></strong></p></div>';
@@ -141,7 +141,7 @@
             wp_die( "This plugin requires WordPress version 3.2 or higher." );
         }
 
-        update_option(
+        add_option(
             'pyd_smug_slider', array(
                                     'animate'         => 'fade',
                                     'smoothheight'    => 1,
@@ -157,21 +157,3 @@
         );
     }
 
-    /*-----------------------------------------------------------------------------------*/
-    /* Deactivation Hook */
-    /*-----------------------------------------------------------------------------------*/
-
-    register_deactivation_hook( __FILE__, 'pydsmug_deactivate' );
-
-    function pydsmug_deactivate() {
-
-        delete_option( 'pyd_smug_api' );
-        delete_option( 'pyd_smug_api_progress' );
-        delete_option( 'pyd_smug_cats' );
-        delete_option( 'pyd_smug_slider' );
-
-        unregister_setting( 'pyd-smugslider-api-group', 'pyd_smug_api' );
-        unregister_setting( 'pyd-smugslider-api-group', 'pyd_smug_api_progress' );
-        unregister_setting( 'pyd-smugslider-settings-group', 'pyd_smug_cats' );
-        unregister_setting( 'pyd-smugslider-settings-group', 'pyd_smug_slider' );
-    }
