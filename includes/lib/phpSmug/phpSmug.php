@@ -127,7 +127,7 @@ class phpSmug {
 
 		// All calls to the API are done via POST using my own constructed pyd_httpRequest class
 		$this->req = new pyd_httpRequest();
-		$this->req->setConfig( array( 'adapter' => $this->adapter, 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
+		$this->req->pyd_setConfig( array( 'adapter' => $this->adapter, 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
 		$this->req->setHeader( array( 'User-Agent' => "{$this->AppName} using phpSmug/{$this->version}", 'Content-Type' => 'application/x-www-form-urlencoded' ) );
     }
 	
@@ -446,7 +446,7 @@ class phpSmug {
 		$this->proxy['username'] = ( isset( $args['username'] ) ) ? $args['username'] : '';
 		$this->proxy['password'] = ( isset( $args['password'] ) ) ? $args['password'] : '';
 		$this->proxy['auth_scheme'] = ( isset( $args['auth_scheme'] ) ) ? $args['auth_scheme'] : 'basic';
-		$this->req->setConfig( array( 'proxy_host' => $this->proxy['server'],
+		$this->req->pyd_setConfig( array( 'proxy_host' => $this->proxy['server'],
 									  'proxy_port' => $this->proxy['port'],
 									  'proxy_user' => $this->proxy['username'],
 									  'proxy_password' => $this->proxy['password'],
@@ -637,13 +637,13 @@ class phpSmug {
 
 		// Create a new object as we still need the other request object
 		$upload_req = new pyd_httpRequest();
-        $upload_req->setMethod( 'PUT' );
-		$upload_req->setConfig( array( 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
+        $upload_req->pyd_setMethod( 'PUT' );
+		$upload_req->pyd_setConfig( array( 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
 		$upload_req->setAdapter( $this->adapter );
 		
 		// Set the proxy if one has been set earlier
 		if ( isset( $this->proxy ) && is_array( $this->proxy ) ) {
-			$upload_req->setConfig(array('proxy_host' => $this->proxy['server'],
+			$upload_req->pyd_setConfig(array('proxy_host' => $this->proxy['server'],
 							             'proxy_port' => $this->proxy['port'],
 									     'proxy_user' => $this->proxy['user'],
 									     'proxy_password' => $this->proxy['password']));
@@ -901,7 +901,7 @@ class phpSmug {
  * The original source is distributed under the Apache License Version 2.0
  */
 
-class HttpRequestException extends Exception {}
+class pyd_HttpRequestException extends Exception {}
 
 interface PhpSmugRequestProcessor
 {
@@ -930,7 +930,7 @@ class pyd_httpRequest
 	/**
     * Adapter Configuration parameters
     * @var  array
-    * @see  setConfig()
+    * @see  pyd_setConfig()
     */
     protected $config = array(
 		'adapter'			=> 'curl',
@@ -986,11 +986,11 @@ class pyd_httpRequest
 	 * @param mixed			$value
 	 * @return pyd_httpRequest
 	 */
-	public function setConfig( $config, $value = null )
+	public function pyd_setConfig( $config, $value = null )
     {
         if ( is_array( $config ) ) {
             foreach ( $config as $name => $value ) {
-                $this->setConfig( $name, $value );
+                $this->pyd_setConfig( $name, $value );
             }
 
         } else {
@@ -1010,7 +1010,7 @@ class pyd_httpRequest
      * @param string HTTP method to use (GET, POST or PUT)
      * @return void
      */
-    public function setMethod( $method )
+    public function pyd_setMethod( $method )
 	{
 		$method = strtoupper( $method );
         if ( $method == 'GET' || $method == 'POST' || $method == 'PUT' ) {
@@ -1332,7 +1332,7 @@ class PhpSmugCurlRequestProcessor implements PhpSmugRequestProcessor
 		// set proxy, if needed
         if ( $config['proxy_host'] ) {
             if ( ! $config['proxy_port'] ) {
-                throw new HttpRequestException( 'Proxy port not provided' );
+                throw new pyd_HttpRequestException( 'Proxy port not provided' );
             }
             $options[CURLOPT_PROXY] = $config['proxy_host'] . ':' . $config['proxy_port'];
             if ( $config['proxy_user'] ) {
@@ -1351,11 +1351,11 @@ class PhpSmugCurlRequestProcessor implements PhpSmugRequestProcessor
 		$body = curl_exec( $ch );
 
 		if ( curl_errno( $ch ) !== 0 ) {
-			throw new HttpRequestException( sprintf( '%s: CURL Error %d: %s', __CLASS__, curl_errno( $ch ), curl_error( $ch ) ), curl_errno( $ch ) );
+			throw new pyd_HttpRequestException( sprintf( '%s: CURL Error %d: %s', __CLASS__, curl_errno( $ch ), curl_error( $ch ) ), curl_errno( $ch ) );
 		}
 
 		if ( substr( curl_getinfo( $ch, CURLINFO_HTTP_CODE ), 0, 1 ) != 2 ) {
-			throw new HttpRequestException( sprintf( 'Bad return code (%1$d) for: %2$s', curl_getinfo( $ch, CURLINFO_HTTP_CODE ), $url ), curl_errno( $ch ) );
+			throw new pyd_HttpRequestException( sprintf( 'Bad return code (%1$d) for: %2$s', curl_getinfo( $ch, CURLINFO_HTTP_CODE ), $url ), curl_errno( $ch ) );
 		}
 
 		curl_close( $ch );
