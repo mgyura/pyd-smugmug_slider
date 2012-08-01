@@ -38,6 +38,7 @@
             $images = ( $pydsmug_pydapi->APIVer == "1.2.2" ) ? $images[ 'Images' ] : $images;
 
 
+
             /*-----------------------------------------------------------------------------------*/
             /* Grab SmugMug images and dump into WP set_transient()  */
             /*-----------------------------------------------------------------------------------*/
@@ -47,7 +48,7 @@
 
                 $pydsmug_get_transient = get_transient( 'pydsmug_albums_' . $albumid . '_' . $imagesize . '_' . $imagelink );
 
-                if ( !$pydsmug_get_transient  ) {
+                if ( !$pydsmug_get_transient ) {
 
                     //Grab the images from SmugMug, using the sizes chosen in the shortcode generator.
                     foreach ( $images as $image => $imagevalue ) {
@@ -63,19 +64,28 @@
                         *
                         */
 
-                        $pydsmug_saved_data[ $imagevalue[ 'id' ] ] = array(
-                            'image_url'     => $imagevalue[ $imagesize ],
-                            'image_link'    => $imagevalue[ $imagelink ],
-                            'image_caption' => $imagevalue[ 'Caption' ]
-                        );
+                        if ( $imagelink == 'BuyURL' ) {
+                            $pydsmug_saved_data[ $imagevalue[ 'id' ] ] = array(
+                                'image_url'     => $imagevalue[ $imagesize ],
+                                'image_link'    => 'http://' . $pydsmug_api[ 'api' ][ 'NickName' ] . '.smugmug.com/buy/' . $albumid . '_' . $albumkey . '/' . $imagevalue[ 'id' ] . '_' . $imagevalue[ 'Key' ],
+                                'image_caption' => $imagevalue[ 'Caption' ]
+                            );
+                        }
 
-                        set_transient( 'pydsmug_albums_' . $albumid, $pydsmug_saved_data, 3600 );
+                        else {
+                            $pydsmug_saved_data[ $imagevalue[ 'id' ] ] = array(
+                                'image_url'     => $imagevalue[ $imagesize ],
+                                'image_link'    => $imagevalue[ $imagelink ],
+                                'image_caption' => $imagevalue[ 'Caption' ]
+                            );
+                        }
+
+                        set_transient( 'pydsmug_albums_' . $albumid . '_' . $imagesize . '_' . $imagelink, $pydsmug_saved_data, 3600 );
 
                     }
                 }
 
-                $images = get_transient( 'pydsmug_albums_' . $albumid );
-
+                $images = get_transient( 'pydsmug_albums_' . $albumid . '_' . $imagesize . '_' . $imagelink );
 
 
                 /*-----------------------------------------------------------------------------------*/
@@ -109,8 +119,8 @@
             }
 
             $output_string = ob_get_contents();
-                    ob_end_clean();
-                    return $output_string;
+            ob_end_clean();
+            return $output_string;
 
         } catch ( Exception $e ) {
             echo "{$e->getMessage()} (Error Code: {$e->getCode()})";
@@ -229,6 +239,7 @@
                             <select id="pydsmug_image_link">
                                 <option value=""> Select where your image should link to </option>
                                 <option value="0"> No link </option>
+                                <option value="BuyURL"> Shopping Cart </option>
                                 <option value="OriginalURL"> Original image size</option>
                                 <option value="LightboxURL"> Lightbox </option>
                                 <option value="LargeURL"> Large image size</option>
