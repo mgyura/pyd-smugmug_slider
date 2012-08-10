@@ -104,7 +104,7 @@
     $pydsmug_progress = get_option( 'pyd_smug_api_progress' );
     $pydsmug_cats     = get_option( 'pyd_smug_cats' );
     $pydsmug_slider   = get_option( 'pyd_smug_slider' );
-    $pydsmug_pydapi   = new phpSmug( "APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=Poka Yoke Design", "OAuthSecret=99460e933382584b6e6cebfb392f749d" );
+    $pydsmug_pydapi   = new pyd_phpSmug( "APIKey=9D8IdL53PxaZoZeCzDGLVMQIaYF9Sg6s", "AppName=Poka Yoke Design", "OAuthSecret=99460e933382584b6e6cebfb392f749d" );
 
 
     /*-----------------------------------------------------------------------------------*/

@@ -1,59 +1,59 @@
 <?php 
 /** 
- * phpSmug - phpSmug is a PHP wrapper class for the SmugMug API. The intention 
+ * pyd_phpSmug - pyd_phpSmug is a PHP wrapper class for the SmugMug API. The intention 
  *		     of this class is to allow PHP application developers to quickly 
  *			 and easily interact with the SmugMug API in their applications, 
  *			 without having to worry about the finer details of the API.
  *
  * @author Colin Seymour <lildood@gmail.com>
  * @version 3.4
- * @package phpSmug
+ * @package pyd_phpSmug
  * @license GPL 3 {@link http://www.gnu.org/copyleft/gpl.html}
  * @copyright Copyright (c) 2008 Colin Seymour
  * 
- * This file is part of phpSmug.
+ * This file is part of pyd_phpSmug.
  *
- * phpSmug is free software: you can redistribute it and/or modify
+ * pyd_phpSmug is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * phpSmug is distributed in the hope that it will be useful,
+ * pyd_phpSmug is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with phpSmug.  If not, see <http://www.gnu.org/licenses/>.
+ * along with pyd_phpSmug.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * For more information about the class and upcoming tools and toys using it,
- * visit {@link http://phpsmug.com/}.
+ * visit {@link http://pyd_phpSmug.com/}.
  *
  * For installation and usage instructions, open the README.txt file 
  * packaged with this class. If you don't have a copy, you can refer to the
  * documentation at:
  * 
- *          {@link http://phpsmug.com/docs/}
+ *          {@link http://pyd_phpSmug.com/docs/}
  * 
- * phpSmug is inspired by phpFlickr 2.1.0 ({@link http://www.phpflickr.com}) by Dan Coulter
+ * pyd_phpSmug is inspired by phpFlickr 2.1.0 ({@link http://www.phpflickr.com}) by Dan Coulter
  * 
- * Please help support the maintenance and development of phpSmug by making
- * a donation ({@link http://phpsmug.com/donate/}).
+ * Please help support the maintenance and development of pyd_phpSmug by making
+ * a donation ({@link http://pyd_phpSmug.com/donate/}).
  **/
 
 /**
  * We define our own exception so application developers can differentiate these
  * from other exceptions.
  */
-class PhpSmugException extends Exception {}
+class pyd_PhpSmugException extends Exception {}
 
 /**
- * phpSmug - all of the phpSmug functionality is provided in this class
+ * pyd_phpSmug - all of the pyd_phpSmug functionality is provided in this class
  *
- * @package phpSmug
+ * @package pyd_phpSmug
  **/
-class phpSmug {
+class pyd_phpSmug {
 	var $version = '3.4';
 	private $cacheType = FALSE;
 	var $SessionID;
@@ -83,7 +83,7 @@ class phpSmug {
     var $max_cache_rows = 1000;
 	
 	/**
-	 * Constructor to set up a phpSmug instance.
+	 * Constructor to set up a pyd_phpSmug instance.
 	 * 
 	 * The Application Name (AppName) is not obligatory, but it helps 
 	 * SmugMug diagnose any problems users of your application may encounter.
@@ -94,7 +94,7 @@ class phpSmug {
 	 * The API Key must be set before any calls can be made.  You can
      * get your own at {@link http://www.smugmug.com/hack/apikeys}
      * 
-     * By default phpSmug will use the latest stable API endpoint, but 
+     * By default pyd_phpSmug will use the latest stable API endpoint, but
      * you can over-ride this when instantiating the instance.
 	 *
 	 * @return	void
@@ -112,7 +112,7 @@ class phpSmug {
 	 **/
 	function __construct()
 	{
-		$args = phpSmug::processArgs( func_get_args() );
+		$args = pyd_phpSmug::processArgs( func_get_args() );
         $this->APIKey = $args['APIKey'];
 		if ( array_key_exists( 'OAuthSecret', $args ) ) {
 			$this->OAuthSecret = $args['OAuthSecret'];
@@ -128,11 +128,11 @@ class phpSmug {
 		// All calls to the API are done via POST using my own constructed pyd_httpRequest class
 		$this->req = new pyd_httpRequest();
 		$this->req->pyd_setConfig( array( 'adapter' => $this->adapter, 'follow_redirects' => TRUE, 'max_redirects' => 3, 'ssl_verify_peer' => FALSE, 'ssl_verify_host' => FALSE, 'connect_timeout' => 60 ) );
-		$this->req->setHeader( array( 'User-Agent' => "{$this->AppName} using phpSmug/{$this->version}", 'Content-Type' => 'application/x-www-form-urlencoded' ) );
+		$this->req->setHeader( array( 'User-Agent' => "{$this->AppName} using pyd_phpSmug/{$this->version}", 'Content-Type' => 'application/x-www-form-urlencoded' ) );
     }
 	
 	/**
-	 * General debug function used for testing and development of phpSmug.
+	 * General debug function used for testing and development of pyd_phpSmug.
 	 *
 	 * Feel free to use this in your own application development.
 	 *
@@ -159,7 +159,7 @@ class phpSmug {
 	 *
 	 * Params can be passed as an associative array or a set of param=value strings.
 	 *
-	 * phpSmug uses the PEAR MDB2 module to interact with the database. You will
+	 * pyd_phpSmug uses the PEAR MDB2 module to interact with the database. You will
 	 * need to install PEAR, the MDB2 module and corresponding database driver yourself
 	 * in order to use database caching.
 	 *
@@ -184,7 +184,7 @@ class phpSmug {
 	 **/
 	public function enableCache()
 	{
-		$args = phpSmug::processArgs( func_get_args() );
+		$args = pyd_phpSmug::processArgs( func_get_args() );
 		$this->cacheType = $args['type'];
 
 		$this->cache_expire = ( array_key_exists( 'cache_expire', $args ) ) ? $args['cache_expire'] : '3600';
@@ -200,7 +200,7 @@ class phpSmug {
 			}
 			$this->cache_db = $db;
 
-			$options = array( 'comment' => 'phpSmug cache', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci' );
+			$options = array( 'comment' => 'pyd_phpSmug cache', 'charset' => 'utf8', 'collate' => 'utf8_unicode_ci' );
 			$fields = array( 'request' => array( 'type' => 'text', 'length' => '35', 'notnull' => TRUE ),
 							 'response' => array( 'type' => 'clob', 'notnull' => TRUE ),
 							 'expiration' => array( 'type' => 'integer', 'notnull' => TRUE )
@@ -217,7 +217,7 @@ class phpSmug {
             }
         } elseif ( $this->cacheType ==  'fs' ) {
 			if ( file_exists( $args['cache_dir'] ) && ( is_dir( $args['cache_dir'] ) ) ) {
-				$this->cache_dir = realpath( $args['cache_dir'] ).'/phpSmug/';
+				$this->cache_dir = realpath( $args['cache_dir'] ).'/pyd_phpSmug/';
 				if ( is_writeable( realpath( $args['cache_dir'] ) ) ) {
 					if ( !is_dir( $this->cache_dir ) ) {
 						mkdir( $this->cache_dir, 0755 );
@@ -245,7 +245,7 @@ class phpSmug {
 	 *
 	 * @access	private
 	 * @return	mixed		Unparsed serialized PHP, or FALSE
-	 * @param	array		$request Request to the SmugMug created by one of the later functions in phpSmug.
+	 * @param	array		$request Request to the SmugMug created by one of the later functions in pyd_phpSmug.
 	 **/
     private function getCached( $request )
 	{
@@ -260,7 +260,7 @@ class phpSmug {
 		if ( $this->cacheType == 'db' ) {
 			$result = $this->cache_db->queryOne( 'SELECT response FROM ' . $this->cache_table . ' WHERE request = ' . $this->cache_db->quote( $reqhash ) . ' AND ' . $this->cache_db->quote( $diff ) . ' < expiration' );
 			if ( PEAR::isError( $result ) ) {
-				throw new PhpSmugException( $result );
+				throw new pyd_PhpSmugException( $result );
 			}
 			if ( !empty( $result ) ) {
                 return $result;
@@ -279,7 +279,7 @@ class phpSmug {
 	 *
 	 * @access	private
 	 * @param	array		$request Request to the SmugMug created by one of the
-	 *						later functions in phpSmug.
+	 *						later functions in pyd_phpSmug.
 	 * @param	string		$response Response from a successful request() method
 	 *						call.
 	 * @return	null|TRUE
@@ -302,7 +302,7 @@ class phpSmug {
 				}
 				if ( PEAR::isError( $result ) ) {
 					// TODO: Create unit test for this
-					throw new PhpSmugException( $result );
+					throw new pyd_PhpSmugException( $result );
 				}
 				return $result;
 			} elseif ( $this->cacheType == 'fs' ) {
@@ -372,7 +372,7 @@ class phpSmug {
 		} else {
 			$endpoint = "http://api.smugmug.com/services/api/php/{$this->APIVer}/";
 			if ( ( isset( $this->SessionID ) && is_null( $this->SessionID ) ) && ( !strpos( $command, 'login.anonymously' ) ) && !$this->OAuthSecret ) {
-				throw new PhpSmugException( 'Not authenticated. No Session ID or OAuth Token.  Please login or provide an OAuth token.' );
+				throw new pyd_PhpSmugException( 'Not authenticated. No Session ID or OAuth Token.  Please login or provide an OAuth token.' );
 			}
 		}
 		
@@ -395,8 +395,8 @@ class phpSmug {
 
         // Process arguments, including method and login data.
         $args = array_merge( $defaultArgs, $args );
-		$keys = array_map( array( 'phpSmug', 'urlencodeRFC3986' ), array_keys( $args ) );
-		$values = array_map( array( 'phpSmug', 'urlencodeRFC3986' ), array_values( $args ) );
+		$keys = array_map( array( 'pyd_phpSmug', 'urlencodeRFC3986' ), array_keys( $args ) );
+		$values = array_map( array( 'pyd_phpSmug', 'urlencodeRFC3986' ), array_values( $args ) );
 		$args = array_combine( $keys, $values );
         ksort( $args );
 		//
@@ -412,7 +412,7 @@ class phpSmug {
 			$this->error_code = $this->parsed_response['code'];
             $this->error_msg = $this->parsed_response['message'];
 			$this->parsed_response = FALSE;
-			throw new PhpSmugException( "SmugMug API Error for method {$command}: {$this->error_msg}", $this->error_code );
+			throw new pyd_PhpSmugException( "SmugMug API Error for method {$command}: {$this->error_msg}", $this->error_code );
 		} else {
 			$this->error_code = FALSE;
             $this->error_msg = FALSE;
@@ -425,7 +425,7 @@ class phpSmug {
     }
 	
 	/**
-	 * Set a proxy for all phpSmug calls.
+	 * Set a proxy for all pyd_phpSmug calls.
 	 *
 	 * Params can be passed as an associative array or a set of param=value strings.
 	 *
@@ -440,7 +440,7 @@ class phpSmug {
 	 **/
     public function setProxy()
 	{
-		$args = phpSmug::processArgs( func_get_args() );
+		$args = pyd_phpSmug::processArgs( func_get_args() );
 		$this->proxy['server'] = $args['server'];
 		$this->proxy['port'] = $args['port'];
 		$this->proxy['username'] = ( isset( $args['username'] ) ) ? $args['username'] : '';
@@ -454,17 +454,17 @@ class phpSmug {
     }
 
 	/**
-	 * Set Token and Token Secret for use by other methods in phpSmug.
+	 * Set Token and Token Secret for use by other methods in pyd_phpSmug.
 	 *
 	 * Use this method to pull in the token and token secret obtained during 
 	 * the OAuth authorisation process.
 	 *
-	 * If OAuth is being used, this method MUST be called so phpSmug knows about
+	 * If OAuth is being used, this method MUST be called so pyd_phpSmug knows about
 	 * the token and token secret.
 	 *
-	 * NOTE: It's up to the application developer using phpSmug to store the Access
+	 * NOTE: It's up to the application developer using pyd_phpSmug to store the Access
 	 * token and token secret in a location convenient for their application.
-	 * phpSmug can not do this as all storage and caching done by phpSmug is 
+	 * pyd_phpSmug can not do this as all storage and caching done by pyd_phpSmug is
 	 * of a temporary nature.
 	 *
 	 * @access	public
@@ -474,7 +474,7 @@ class phpSmug {
 	 **/
 	public function setToken()
 	{
-		 $args = phpSmug::processArgs( func_get_args() );
+		 $args = pyd_phpSmug::processArgs( func_get_args() );
 		 $this->oauth_token = $args['id'];
 		 $this->oauth_token_secret = $args['Secret'];
 	}
@@ -527,7 +527,7 @@ class phpSmug {
 	 * Single login function for all non-OAuth logins.
 	 * 
 	 * I've created this function to try and get things consistent across the 
-	 * entire phpSmug functionality.  
+	 * entire pyd_phpSmug functionality.
 	 * 
 	 * This method will determine the login type from the arguments provided. If 
 	 * no arguments are provide, anonymous login will be used.
@@ -545,7 +545,7 @@ class phpSmug {
 	public function login()
 	{
 		if ( func_get_args() ) {
-			$args = phpSmug::processArgs( func_get_args() );
+			$args = pyd_phpSmug::processArgs( func_get_args() );
 			if ( array_key_exists( 'EmailAddress', $args ) ) {
 				// Login with password
 				$this->request( 'smugmug.login.withPassword', array( 'EmailAddress' => $args['EmailAddress'], 'Password' => $args['Password'] ) );
@@ -581,13 +581,13 @@ class phpSmug {
 
 	public function login_withHash()
 	{
-		$args = phpSmug::processArgs( func_get_args() );
+		$args = pyd_phpSmug::processArgs( func_get_args() );
 		return $this->login( $args );
 	}
 
 	public function login_withPassword( $args )
 	{
-		$args = phpSmug::processArgs( func_get_args() );
+		$args = pyd_phpSmug::processArgs( func_get_args() );
 		return $this->login( $args );
 	}
 	
@@ -609,9 +609,9 @@ class phpSmug {
 	 **/
 	public function images_upload()
 	{
-		$args = phpSmug::processArgs( func_get_args() );
+		$args = pyd_phpSmug::processArgs( func_get_args() );
 		if ( !array_key_exists( 'File', $args ) ) {
-			throw new PhpSmugException( 'No upload file specified.' );
+			throw new pyd_PhpSmugException( 'No upload file specified.' );
 		}
 		
 		// Set FileName, if one isn't provided in the method call
@@ -619,8 +619,8 @@ class phpSmug {
 			$args['FileName'] = basename( $args['File'] );
 		}
 
-		// Ensure the FileName is phpSmug::urlencodeRFC3986 encoded - caters for stange chars and spaces
-		$args['FileName'] = phpSmug::urlencodeRFC3986( $args['FileName'] );
+		// Ensure the FileName is pyd_phpSmug::urlencodeRFC3986 encoded - caters for stange chars and spaces
+		$args['FileName'] = pyd_phpSmug::urlencodeRFC3986( $args['FileName'] );
 
 		// OAuth Stuff
 		if ( $this->OAuthSecret ) {
@@ -632,7 +632,7 @@ class phpSmug {
 			$data = fread( $fp, filesize( $args['File'] ) );
 			fclose( $fp );
 		} else {
-			throw new PhpSmugException( "File doesn't exist: {$args['File']}" );
+			throw new pyd_PhpSmugException( "File doesn't exist: {$args['File']}" );
 		}
 
 		// Create a new object as we still need the other request object
@@ -649,7 +649,7 @@ class phpSmug {
 									     'proxy_password' => $this->proxy['password']));
 		}
 
-		$upload_req->setHeader( array( 'User-Agent' => "{$this->AppName} using phpSmug/{$this->version}",
+		$upload_req->setHeader( array( 'User-Agent' => "{$this->AppName} using pyd_phpSmug/{$this->version}",
 									   'Content-MD5' => md5_file( $args['File'] ),
 									   'Connection' => 'keep-alive') );
 
@@ -699,7 +699,7 @@ class phpSmug {
 			$this->error_code = $this->parsed_response['code'];
             $this->error_msg = $this->parsed_response['message'];
 			$this->parsed_response = FALSE;
-			throw new PhpSmugException( "SmugMug API Error for method image_upload: {$this->error_msg}", $this->error_code );
+			throw new pyd_PhpSmugException( "SmugMug API Error for method image_upload: {$this->error_msg}", $this->error_code );
 		} else {
 			$this->error_code = FALSE;
             $this->error_msg = FALSE;
@@ -709,7 +709,7 @@ class phpSmug {
 	
 	/**
 	 * Dynamic method handler.  This function handles all SmugMug method calls
-	 * not explicitly implemented by phpSmug.
+	 * not explicitly implemented by pyd_phpSmug.
 	 * 
  	 * @access	public
 	 * @uses	request
@@ -722,7 +722,7 @@ class phpSmug {
 	public function __call( $method, $arguments )
 	{
 		$method = strtr( $method, '_', '.' );
-		$args = phpSmug::processArgs( $arguments );
+		$args = pyd_phpSmug::processArgs( $arguments );
 	
 		if ( $this->OAuthSecret ) {
 			$sig = $this->generate_signature( $method, $args );
@@ -772,7 +772,7 @@ class phpSmug {
 	  **/
 	 public function authorize()
 	{
-		 $args = phpSmug::processArgs( func_get_args() );
+		 $args = pyd_phpSmug::processArgs( func_get_args() );
 		 $perms = ( array_key_exists( 'Permissions', $args ) ) ? $args['Permissions'] : 'Public';
 		 $access = ( array_key_exists( 'Access', $args ) ) ? $args['Access'] : 'Read';
  		 return "https://secure.smugmug.com/services/oauth/authorize.mg?Access=$access&Permissions=$perms&oauth_token={$this->oauth_token}";
@@ -799,7 +799,7 @@ class phpSmug {
 	  *
 	  * In order for this method to correctly generate a signature, setToken()
 	  * MUST be called to set the token and token secret within the instance of
-	  * phpSmug.
+	  * pyd_phpSmug.
 	  *
 	  * @access	private
 	  * @param	string		$apicall The API method.
@@ -817,10 +817,10 @@ class phpSmug {
 			}
 		}
 		if ( $this->oauth_signature_method == 'PLAINTEXT' ) {
-			return phpSmug::urlencodeRFC3986( $this->OAuthSecret ).'&'.phpSmug::urlencodeRFC3986( $this->oauth_token_secret );
+			return pyd_phpSmug::urlencodeRFC3986( $this->OAuthSecret ).'&'.pyd_phpSmug::urlencodeRFC3986( $this->oauth_token_secret );
 		} else {
 			$this->oauth_signature_method = 'HMAC-SHA1';
-			$encKey = phpSmug::urlencodeRFC3986( $this->OAuthSecret ) . '&' . phpSmug::urlencodeRFC3986( $this->oauth_token_secret );
+			$encKey = pyd_phpSmug::urlencodeRFC3986( $this->OAuthSecret ) . '&' . pyd_phpSmug::urlencodeRFC3986( $this->oauth_token_secret );
 			
 			if ( strpos( $apicall, 'Token' ) || $this->secure && $apicall != 'Upload' ) {
 				$endpoint = "https://secure.smugmug.com/services/api/php/{$this->APIVer}/";
@@ -843,8 +843,8 @@ class phpSmug {
 			if ( $apicall != 'Upload' ) $params = array_merge( $params, array('method' => $apicall ) );
 			$params = ( !empty( $this->oauth_token ) ) ? array_merge( $params, array( 'oauth_token' => $this->oauth_token ) ) : $params;
 			if ( $apicall != 'Upload' ) $params = ( !empty( $apiargs ) ) ? array_merge( $params, $apiargs ) : $params;
-		    $keys = array_map( array( 'phpSmug', 'urlencodeRFC3986' ), array_keys( $params ) );
-		    $values = array_map( array( 'phpSmug', 'urlencodeRFC3986' ), array_values( $params ) );
+		    $keys = array_map( array( 'pyd_phpSmug', 'urlencodeRFC3986' ), array_keys( $params ) );
+		    $values = array_map( array( 'pyd_phpSmug', 'urlencodeRFC3986' ), array_values( $params ) );
 			$params = array_combine( $keys, $values );
 		    // Sort by keys (natsort)
 		    uksort( $params, 'strnatcmp' );
@@ -858,7 +858,7 @@ class phpSmug {
 					$string .= '&';
 				}
 			}
-			$base_string = $method . '&' . phpSmug::urlencodeRFC3986( $endpoint ) . '&' .  phpSmug::urlencodeRFC3986( $string );
+			$base_string = $method . '&' . pyd_phpSmug::urlencodeRFC3986( $endpoint ) . '&' .  pyd_phpSmug::urlencodeRFC3986( $string );
 			$sig = base64_encode( hash_hmac( 'sha1', $base_string, $encKey, true ) );
 			return $sig;
 		}
@@ -896,14 +896,14 @@ class phpSmug {
  * I've included them in this file.
  *
  * The code below has been taken from the Habari project - http://habariproject.org
- * and modified to suit the needs of phpSmug.
+ * and modified to suit the needs of pyd_phpSmug.
  *
  * The original source is distributed under the Apache License Version 2.0
  */
 
 class pyd_HttpRequestException extends Exception {}
 
-interface PhpSmugRequestProcessor
+interface pyd_PhpSmugRequestProcessor
 {
 	public function execute( $method, $url, $headers, $body, $config );
 	public function getBody();
@@ -925,7 +925,7 @@ class pyd_httpRequest
 	private $response_body = '';
 	private $response_headers = '';
 
-	private $user_agent = "Unknown application using phpSmug/3.3";
+	private $user_agent = "Unknown application using pyd_phpSmug/3.3";
 
 	/**
     * Adapter Configuration parameters
@@ -971,10 +971,10 @@ class pyd_httpRequest
 		// can't use curl's followlocation in safe_mode with open_basedir, so fallback to socket for now
 		if ( function_exists( 'curl_init' ) && ( $this->config['adapter'] == 'curl' )
 			 && ! ( ini_get( 'safe_mode' ) || ini_get( 'open_basedir' ) ) ) {
-			$this->processor = new PhpSmugCurlRequestProcessor;
+			$this->processor = new pyd_PhpSmugCurlRequestProcessor;
 		}
 		else {
-			$this->processor = new PhpSmugSocketRequestProcessor;
+			$this->processor = new pyd_PhpSmugSocketRequestProcessor;
 		}
 	}
 
@@ -1091,10 +1091,10 @@ class pyd_httpRequest
 			// We need to reset the processor too.  This is quite crude and messy, but we need to do it.
 			if ( function_exists( 'curl_init' ) && ( $adapter == 'curl' )
 				 && ! ( ini_get( 'safe_mode' ) || ini_get( 'open_basedir' ) ) ) {
-				$this->processor = new PhpSmugCurlRequestProcessor;
+				$this->processor = new pyd_PhpSmugCurlRequestProcessor;
 			}
 			else {
-				$this->processor = new PhpSmugSocketRequestProcessor;
+				$this->processor = new pyd_PhpSmugSocketRequestProcessor;
 			}
 		}
 	}
@@ -1276,7 +1276,7 @@ class pyd_httpRequest
 
  
 
-class PhpSmugCurlRequestProcessor implements PhpSmugRequestProcessor
+class pyd_PhpSmugCurlRequestProcessor implements pyd_PhpSmugRequestProcessor
 {
 	private $response_body = '';
 	private $response_headers = '';
@@ -1395,7 +1395,7 @@ class PhpSmugCurlRequestProcessor implements PhpSmugRequestProcessor
 
  
 
-class PhpSmugSocketRequestProcessor implements PhpSmugRequestProcessor
+class pyd_PhpSmugSocketRequestProcessor implements pyd_PhpSmugRequestProcessor
 {
 	private $response_body = '';
 	private $response_headers = '';
