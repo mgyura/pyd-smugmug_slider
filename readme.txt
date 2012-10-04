@@ -4,7 +4,7 @@ Donate link: http://gyura.com
 Tags: SmugMug, images, responsive slider, pictures, smug mug
 Requires at least: 3.2
 Tested up to: 3.4
-Stable tag: 1.05
+Stable tag: 1.06
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
