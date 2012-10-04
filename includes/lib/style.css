@@ -8,15 +8,26 @@
     margin: 15px;
     text-align: center;
 }
+
 .wp-admin .pydsmug_checkbox {
-    float: left; width: 31%; margin-right: 1%
+    float: left;
+    width: 31%;
+    margin-right: 1%
 }
+
 .wp-admin .pydsmug_cats h4 {
     margin: 10px 0 0;
 }
+
 .wp-admin .pydsmug_cats {
     margin: 25px;
 }
+
+.flexslider .slides {
+    overflow: hidden;
+    padding: 0;
+}
+
 .pydClear {
     clear: both;
 }

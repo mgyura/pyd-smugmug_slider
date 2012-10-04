@@ -47,6 +47,9 @@ No.  There are many great plugins that work with other photo services.  Our aim 
 
 == Changelog ==
 
+= 1.06 =
+* Fix CSS issue with overflow and padding
+
 = 1.05 =
 * Fixed conflicts with other SmugMug plugins using phpsmug
 
@@ -65,6 +68,9 @@ No.  There are many great plugins that work with other photo services.  Our aim 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.06 =
+* Minor CSS issue for some users with images bleeding over the container.
 
 = 1.05 =
 Fixed conflicts with other SmugMug plugins using phpsmug
